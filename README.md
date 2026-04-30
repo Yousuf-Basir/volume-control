@@ -1,23 +1,25 @@
-# Volume Control
+# Volume and Microphone Control
 
-A Windows system tray application that allows you to control system volume using keyboard shortcuts (Alt+F2 and Alt+F3). The app runs in the background with a system tray icon.
+A lightweight Windows system tray application to control system volume and microphone mute status using keyboard shortcuts.
+
+## 🚀 Download
+
+You can download the latest portable version from the **[Releases](https://github.com/Yousuf-Basir/volume-control/releases)** page.
+
+The app is now a single-file executable (`keypress.exe`)—no installation required!
 
 ## Features
 
 - **Volume Control Shortcuts**
   - `Alt+F2`: Decrease volume
   - `Alt+F3`: Increase volume
-  
+- **Microphone Control**
+  - `Alt+K`: Toggle Microphone Mute/Unmute
+  - Instant Toast OSD (On-Screen Display) feedback
 - **System Tray Integration**
   - Runs in the background with a system tray icon
-  - Right-click tray icon to access menu
-  - Toggle "Start with Windows" to launch automatically on boot
-  - Click "Quit" to exit the application
-
-- **Windows Integration**
-  - Shows Windows default volume indicator when changing volume
-  - Custom tray icon (icon.png)
-  - Starts with Windows (optional)
+  - Right-click tray icon to toggle "Start with Windows"
+  - Quick access to Microphone Mute toggle
 
 ## Installation
 

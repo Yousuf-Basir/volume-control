@@ -4,6 +4,9 @@
 #include <endpointvolume.h>
 #include <initguid.h>
 #include <gdiplus.h>
+#include <shlwapi.h>
+
+#define IDI_ICON_PNG 101
 
 #pragma comment(lib, "shell32.lib")
 #pragma comment(lib, "gdiplus.lib")
@@ -20,10 +23,21 @@ HWND g_hToastWnd = nullptr;
 UINT_PTR g_toastTimer = 0;
 ULONG_PTR g_gdiplusToken;
 
-HICON LoadIconFromPNG(const wchar_t* filePath) {
+HICON LoadIconFromResource(int resourceId) {
+    HRSRC hResInfo = FindResource(NULL, MAKEINTRESOURCE(resourceId), RT_RCDATA);
+    if (!hResInfo) return NULL;
+
+    DWORD resSize = SizeofResource(NULL, hResInfo);
+    HGLOBAL hResData = LoadResource(NULL, hResInfo);
+    if (!hResData) return NULL;
+
+    void* pRes = LockResource(hResData);
+    IStream* pStream = SHCreateMemStream((const BYTE*)pRes, resSize);
+    if (!pStream) return NULL;
+
     HICON hIcon = NULL;
-    
-    Gdiplus::Image* image = Gdiplus::Image::FromFile(filePath);
+    Gdiplus::Image* image = Gdiplus::Image::FromStream(pStream);
+
     if (image && image->GetLastStatus() == Gdiplus::Ok) {
         int width = image->GetWidth();
         int height = image->GetHeight();
@@ -48,10 +62,10 @@ HICON LoadIconFromPNG(const wchar_t* filePath) {
         DeleteObject(hBmp);
         DeleteDC(hMemDC);
         ReleaseDC(NULL, hDC);
-        
-        delete image;
     }
     
+    pStream->Release();
+    delete image;
     return hIcon;
 }
 
@@ -387,15 +401,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     nid.uFlags = NIF_ICON | NIF_MESSAGE | NIF_TIP;
     nid.uCallbackMessage = WM_TRAYICON;
     
-    char exePath[MAX_PATH];
-    GetModuleFileName(NULL, exePath, MAX_PATH);
-    char* lastSlash = strrchr(exePath, '\\');
-    if (lastSlash) *lastSlash = '\0';
-    strcat_s(exePath, "\\icon.png");
-    
-    wchar_t wexePath[MAX_PATH];
-    MultiByteToWideChar(CP_ACP, 0, exePath, -1, wexePath, MAX_PATH);
-    HICON hCustomIcon = LoadIconFromPNG(wexePath);
+    HICON hCustomIcon = LoadIconFromResource(IDI_ICON_PNG);
     nid.hIcon = hCustomIcon ? hCustomIcon : LoadIcon(NULL, IDI_APPLICATION);
     
     strcpy_s(nid.szTip, "Volume Control\nAlt+F2: Vol Down\nAlt+F3: Vol Up");

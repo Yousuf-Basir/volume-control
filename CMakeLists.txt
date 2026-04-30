@@ -6,10 +6,12 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(CMAKE_WIN32_EXECUTABLE ON)
 
-add_executable(keypress WIN32 main.cpp)
+set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+
+add_executable(keypress WIN32 main.cpp resources.rc)
 
 if(WIN32)
     set(WINDOWS_SDK_LIB "C:/Program Files (x86)/Windows Kits/10/Lib/10.0.26100.0/um/x64")
     target_link_directories(keypress PRIVATE ${WINDOWS_SDK_LIB})
-    target_link_libraries(keypress PRIVATE user32.lib mmdevapi.lib shell32.lib gdiplus.lib)
+    target_link_libraries(keypress PRIVATE user32.lib mmdevapi.lib shell32.lib gdiplus.lib shlwapi.lib)
 endif()
